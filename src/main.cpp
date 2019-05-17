@@ -29,9 +29,6 @@ AutoConnectInput thingsBoardTokenInput("thingsboard_token", "", "Token", "Token"
 ACSubmit(thingsBoardSave, "SAVE", "/thingsboard_setting");
 AutoConnectAux thingsBoardSettings("/thingsboard_setting", "ThingsBoard Setting");
 
-boolean buttonUp_Pressed = false;
-boolean buttonDown_Pressed = false;
-
 boolean invertButtons = false;
 boolean blockButtons = false;
 
@@ -163,8 +160,8 @@ void loop()
 {
   delay(100);
 
-  buttonUp_Pressed = digitalRead(BUTTON_UP_INPUT);
-  buttonDown_Pressed = digitalRead(BUTTON_DOWN_INPUT);
+  boolean buttonUp_Pressed = digitalRead(BUTTON_UP_INPUT);
+  boolean buttonDown_Pressed = digitalRead(BUTTON_DOWN_INPUT);
 
   thingsBoard.sendTelemetryBool("ButtonUpInput", buttonUp_Pressed);
   thingsBoard.sendTelemetryBool("ButtonDownInput", buttonDown_Pressed);
