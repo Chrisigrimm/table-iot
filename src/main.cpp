@@ -10,7 +10,8 @@
 #define BUTTON_UP_OUTPUT 5
 #define BUTTON_DOWN_OUTPUT 4
 
-#define EEPROM_ADDRESS 512
+#define EEPROM_ADDRESS 2048
+#define ThingsBoardConnectTimeout 5000
 
 // #define THINGSBOARD_SERVER "104.248.252.18"
 // #define TOKEN "KJtiinhydrY2MAFMBdIG"
@@ -34,6 +35,8 @@ boolean blockButtons = false;
 
 boolean forceUp = false;
 boolean forceDown = false;
+
+int tryToConnectAgainIn = 0;
 
 struct ThingsBoardDataStruct
 {
@@ -206,8 +209,10 @@ void loop()
     digitalWrite(LED_BUILTIN, HIGH);
   }
 
-  if (!thingsBoard.connected())
+  if (!thingsBoard.connected() && tryToConnectAgainIn < millis())
   {
+    tryToConnectAgainIn = millis() + ThingsBoardConnectTimeout;
+
     int thingsBoardServerLength = thingsBoardServerInput.value.length() + 1;
     int thingsBoardTokenLength = thingsBoardTokenInput.value.length() + 1;
 
@@ -241,7 +246,9 @@ void loop()
       EEPROM.commit();
     }
   }
-  else
+  
+  
+  if(thingsBoard.connected())
   {
     if (!subscribed)
     {
