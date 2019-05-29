@@ -36,6 +36,9 @@ boolean blockButtons = false;
 boolean forceUp = false;
 boolean forceDown = false;
 
+boolean inputButtonUpToggle = false;
+boolean inputButtonDownToggle = false;
+
 int tryToConnectAgainIn = 0;
 
 struct ThingsBoardDataStruct
@@ -166,9 +169,26 @@ void loop()
   boolean buttonUp_Pressed = digitalRead(BUTTON_UP_INPUT);
   boolean buttonDown_Pressed = digitalRead(BUTTON_DOWN_INPUT);
 
-  thingsBoard.sendTelemetryBool("ButtonUpInput", buttonUp_Pressed);
-  thingsBoard.sendTelemetryBool("ButtonDownInput", buttonDown_Pressed);
+  if(buttonUp_Pressed && inputButtonUpToggle)
+  {
+      inputButtonUpToggle = !inputButtonUpToggle;
+      thingsBoard.sendTelemetryBool("ButtonUpInput", buttonUp_Pressed);
+  }else
+  {
+      inputButtonUpToggle = !inputButtonUpToggle;
+      thingsBoard.sendTelemetryBool("ButtonUpInput", buttonUp_Pressed);
+  }
 
+  if(buttonDown_Pressed && inputButtonDownToggle)
+  {
+      inputButtonDownToggle = !inputButtonDownToggle;
+      thingsBoard.sendTelemetryBool("ButtonUpInput", buttonUp_Pressed);
+  }else
+  {
+      inputButtonDownToggle = !inputButtonDownToggle;
+      thingsBoard.sendTelemetryBool("ButtonUpInput", buttonUp_Pressed);
+  }
+  
   if (invertButtons)
   {
     boolean temp_buttonUp_Pressed = buttonUp_Pressed;
@@ -211,6 +231,15 @@ void loop()
 
   if (!thingsBoard.connected() && tryToConnectAgainIn < millis())
   {
+    invertButtons = false;
+    blockButtons = false;
+
+    forceUp = false;
+    forceDown = false;
+
+    inputButtonUpToggle = false;
+    inputButtonDownToggle = false;
+
     tryToConnectAgainIn = millis() + ThingsBoardConnectTimeout;
 
     int thingsBoardServerLength = thingsBoardServerInput.value.length() + 1;
